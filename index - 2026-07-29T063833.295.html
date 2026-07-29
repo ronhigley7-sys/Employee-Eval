@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Annual Performance Evaluation - Arnot Health</title>
+<style>
+  :root{
+    --navy:#2f5c8a; --navy-dark:#1f3f61;
+    --header-blue:#7A9ED8;      /* section header band, matches xlsm */
+    --comp-blue:#A6C9EC;        /* competency name row */
+    --values-yellow:#F5E9B0;    /* values reflected / considerations */
+    --input-blue:#DCE6F5;       /* rating select + status value boxes */
+    --label-blue-bg:#EDF1F7;    /* label boxes (Overall Competency Rating, etc.) */
+    --label-blue-text:#215C98;
+    --tan:#DFCDBF;              /* rating scale reference table header */
+    --ink:#1f2a33; --muted:#5c6b78; --line:#c9d2da; --good:#2e7d4f; --bad:#b3392c;
+    --warn:#b5860a; --bg:#f6f7f9; --card:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:Calibri,Arial,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:0 0 60px;}
+  .band{background:var(--navy);color:#fff;padding:22px 28px;}
+  .band h1{margin:0;font-size:22px;font-weight:600;}
+  .band p{margin:4px 0 0;font-size:13px;color:#cdd8e2;font-family:Arial,sans-serif;}
+  .wrap{max-width:980px;margin:0 auto;padding:24px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:20px 24px;margin-bottom:18px;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+  .card h2{font-size:16px;letter-spacing:.3px;color:var(--label-blue-text);border-bottom:2px solid var(--header-blue);padding-bottom:8px;margin:0 0 16px;}
+  .card h3{font-size:14px;color:var(--label-blue-text);margin:18px 0 4px;font-family:Calibri,Arial,sans-serif;}
+  label{font-family:Calibri,Arial,sans-serif;font-size:12px;color:var(--muted);display:block;margin-bottom:3px;}
+  input,select,textarea{font-family:Calibri,Arial,sans-serif;font-size:13.5px;padding:7px 9px;border:1px solid var(--line);border-radius:4px;width:100%;background:#fff;color:var(--ink);}
+  textarea{resize:vertical;line-height:1.4;}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .field{margin-bottom:10px;}
+  .rating-scale-ref{width:100%;border-collapse:collapse;margin-bottom:18px;font-family:Calibri,Arial,sans-serif;font-size:12.5px;}
+  .rating-scale-ref th{background:var(--tan);text-align:left;padding:7px 10px;border:1px solid #c9b8a3;}
+  .rating-scale-ref td{padding:7px 10px;border:1px solid #e2cdb8;vertical-align:top;background:#fdfaf6;}
+  .rating-scale-ref td.rlabel{font-weight:bold;white-space:nowrap;background:#f7efe4;}
+  .comp{border:1px solid var(--line);border-radius:5px;margin-bottom:14px;overflow:hidden;background:#fff;}
+  .comp-name{background:var(--comp-blue);padding:8px 14px;font-weight:bold;font-size:14px;color:#122a44;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .comp-body{padding:10px 14px;}
+  .comp-body .desc{font-size:12.5px;color:var(--muted);font-family:Calibri,Arial,sans-serif;margin-bottom:8px;}
+  .comp-values{background:var(--values-yellow);border:1px solid #e3d493;border-radius:4px;padding:8px 10px;font-size:12px;font-family:Calibri,Arial,sans-serif;color:#4a4322;margin-bottom:8px;}
+  .comp-values b{color:#3a3418;}
+  .rating-select{width:170px;flex:0 0 auto;background:var(--input-blue);font-weight:bold;}
+  .example-box{margin-top:8px;font-size:12.5px;font-family:Calibri,Arial,sans-serif;color:#374553;background:#f2f6fb;border:1px solid var(--line);border-radius:4px;padding:8px 10px;min-height:20px;}
+  .example-box.empty{color:#98a2ab;font-style:italic;}
+  .section-comment{margin-top:6px;}
+  .btn{font-family:Calibri,Arial,sans-serif;font-size:12.5px;background:var(--navy);color:#fff;border:none;padding:7px 14px;border-radius:4px;cursor:pointer;}
+  .btn:hover{background:var(--navy-dark);}
+  .btn.secondary{background:#fff;color:var(--navy);border:1px solid var(--navy);}
+  .btn.secondary:hover{background:#eef2f6;}
+  .btn.small{padding:4px 9px;font-size:11.5px;}
+  .rowline{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eef1f4;font-family:Calibri,Arial,sans-serif;font-size:13px;}
+  .rowline:last-child{border-bottom:none;}
+  .status-pill{font-size:11.5px;font-weight:bold;padding:2px 9px;border-radius:10px;font-family:Calibri,Arial,sans-serif;}
+  .pill-compliant{background:#e4f3ea;color:var(--good);}
+  .pill-noncompliant{background:#fbe7e4;color:var(--bad);}
+  .pill-unknown{background:#fdf0d9;color:var(--warn);}
+  .score-banner{display:flex;gap:18px;align-items:center;flex-wrap:wrap;}
+  .score-box{background:var(--label-blue-bg);border:1px solid var(--input-blue);border-radius:6px;padding:10px 18px;text-align:center;font-family:Calibri,Arial,sans-serif;}
+  .score-box .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--label-blue-text);margin-top:3px;font-weight:bold;}
+  .score-box .num{font-size:26px;font-weight:bold;line-height:1;color:var(--label-blue-text);}
+  .score-box .num.incomplete{color:var(--bad);font-size:16px;}
+  .psp-flag{font-family:Calibri,Arial,sans-serif;font-size:12.5px;background:#fff4e5;border:1px solid #f0d29b;color:#8a5a00;padding:8px 12px;border-radius:5px;}
+  .metric-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .tile{border:1px solid var(--line);border-radius:5px;padding:12px 14px;text-align:center;font-family:Calibri,Arial,sans-serif;background:var(--label-blue-bg);}
+  .tile .val{font-size:22px;font-weight:bold;color:var(--label-blue-text);}
+  .tile .lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+  .tile.na{opacity:.45;}
+  details.import{font-family:Calibri,Arial,sans-serif;font-size:12.5px;}
+  details.import textarea{margin-top:8px;height:90px;font-family:monospace;font-size:11.5px;}
+  .hint{font-family:Calibri,Arial,sans-serif;font-size:11.5px;color:var(--muted);margin-top:6px;}
+  .coc-list{font-family:Calibri,Arial,sans-serif;font-size:12.5px;color:#374553;line-height:1.5;margin:0 0 10px 0;padding-left:20px;}
+  .coc-list li{margin-bottom:6px;}
+  .coc-list ul{margin-top:6px;}
+  .sig-block{margin-top:16px;border-top:2px solid var(--header-blue);padding-top:14px;}
+  .sigpad-wrap{border:1px solid var(--line);border-radius:4px;background:#fff;display:inline-block;}
+  .sigpad{display:block;touch-action:none;cursor:crosshair;}
+  .sig-row{display:grid;grid-template-columns:2fr 2fr 1fr;gap:16px;align-items:end;margin-bottom:22px;}
+  .sig-row label{margin-bottom:4px;}
+  .toolbar{position:sticky;top:0;background:var(--bg);padding:10px 24px 4px;display:flex;justify-content:flex-end;gap:8px;z-index:5;max-width:980px;margin:0 auto;}
+  @media print{
+    .toolbar, details.import, .no-print, .example-box.empty { display:none!important; }
+    body{background:#fff;}
+    .card{box-shadow:none;border:1px solid #999;}
+    textarea::placeholder, input::placeholder { color:transparent!important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="band"><div class="wrap" style="padding:0;">
+  <h1>Annual Performance Evaluation &ndash; Inpatient RN / LPN / CA</h1>
+  <p>Arnot Ogden Medical Center &middot; 3B/3C</p>
+</div></div>
+
+<div class="toolbar">
+  <button class="btn secondary" onclick="exportJSON()">Export JSON</button>
+  <button class="btn secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSONFile(event)">
+  <button class="btn" onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="card">
+    <h2>Employee Information</h2>
+    <div class="grid4">
+      <div class="field"><label>Employee Name</label>
+        <select id="empName" onchange="onEmployeeSelected()">
+          <option value="">Loading staff list…</option>
+        </select>
+      </div>
+      <div class="field"><label>Employee ID</label><input id="empId" value="1234" placeholder="1234-####"></div>
+      <div class="field"><label>Role</label>
+        <select id="empRole" onchange="onNameOrRoleChange()">
+          <option value="RN">RN</option>
+          <option value="LPN">LPN</option>
+          <option value="CA">CA</option>
+        </select>
+      </div>
+      <div class="field"><label>Unit</label>
+        <select id="empUnit"><option>3B Tele Med-Surg/Stroke</option><option>3C</option></select>
+      </div>
+    </div>
+    <div class="grid4">
+      <div class="field"><label>Review Year</label><input id="reviewYear" value="2026"></div>
+      <div class="field"><label>Review Date</label><input id="reviewDate" type="date"></div>
+      <div class="field"><label>Manager</label><input id="managerName" value="Ron Higley"></div>
+      <div class="field"><label>Job Title</label><input id="jobTitleCC" placeholder="e.g. Registered Nurse"></div>
+    </div>
+  </div>
+
+  <!-- COMPETENCIES -->
+  <div class="card">
+    <h2>Core Competency Assessment</h2>
+    <table class="rating-scale-ref">
+      <tr><th style="width:170px;">Rating Scale</th><th>Rating Description</th></tr>
+      <tr><td class="rlabel">5 &ndash; Exemplary</td><td>Performance is exceptional in all areas and is recognized as being far superior to others. Demonstrates exceptional quality and quantity of work.</td></tr>
+      <tr><td class="rlabel">4 &ndash; Exceeds Expectations</td><td>Performance exceeds most position requirements, and is of high quality. Often performs beyond expectations.</td></tr>
+      <tr><td class="rlabel">3 &ndash; Meets Expectations</td><td>Performance meets the position requirements. Work quality and quantity consistently meets the standards of performance expectations.</td></tr>
+      <tr><td class="rlabel">2 &ndash; Needs Improvement</td><td>Performance does not consistently meet expectations. There is a recognized need for improvement. Performance Success Plan (PSP) addressing deficient areas may be appropriate. (Attach if applicable)</td></tr>
+      <tr><td class="rlabel">1 &ndash; Unsatisfactory</td><td>Performance is unacceptable and requires immediate improvement. Performance Success Plan (PSP) addressing deficient areas is required. (Please attach)</td></tr>
+    </table>
+    <div class="hint no-print" style="margin-bottom:10px;">Pick a rating 1&ndash;5 for each competency. The box below each one is a suggested example for this role and rating &mdash; edit freely; it updates automatically if you change the rating.</div>
+    <div id="competencyList"></div>
+
+    <h3>Section Summaries (edit as needed)</h3>
+    <div id="sectionComments"></div>
+
+    <div class="score-banner" style="margin-top:16px;">
+      <div class="score-box"><div class="num" id="overallScore">&ndash;</div><div class="lbl">Overall Competency Rating</div></div>
+      <div id="pspFlag"></div>
+    </div>
+  </div>
+
+  <!-- COMPLIANCE -->
+  <div class="card">
+    <h2>Compliance</h2>
+    <div class="hint" style="margin-bottom:10px;">Instructions: When evaluating the employee's compliance status, consider the previous 12 months to their evaluation due date. Select "Compliant" or "Non-Compliant" for each task. All tasks must be "Compliant" in order to achieve a "Compliant" overall status. If any are "Non-Compliant," the overall compliance status will default to "Non-Compliant."</div>
+    <div id="complianceList"></div>
+    <div class="rowline" style="margin-top:6px;font-weight:bold;">
+      <span>Overall Compliance Status</span>
+      <span class="status-pill" id="overallCompliancePill">&ndash;</span>
+    </div>
+    <div class="rowline" style="margin-top:4px;">
+      <span id="ccSyncStatus" class="hint">Not yet synced.</span>
+      <button class="btn secondary small no-print" onclick="refreshFromCC(true)">Refresh Data</button>
+    </div>
+    <details class="import">
+      <summary>Manual override / fallback (paste export, matched on Employee Name)</summary>
+      <div class="hint">Fit Testing, BCMA, Pain Reassessment, and Absences fill in automatically above. Merit Fair, Sexual Harassment Training, Employee Evaluation completion, and flu vaccine aren't tracked automatically yet, so set those manually below, or paste an export to override any field. Fields: name, meritFair, sexHarassTrain, fitTesting, empEval, fluVaccine, tbReassessment ("Compliant"/"Non-Compliant"), bcma (0-100), painReassessment (0-100), absences (number).</div>
+      <textarea id="ccPaste" placeholder='[{"name":"Lorraine Hoff","meritFair":"Compliant","sexHarassTrain":"Compliant","fluVaccine":"Compliant","tbReassessment":"Non-Compliant"}]'></textarea>
+      <button class="btn small" style="margin-top:6px;" onclick="loadCCPaste()">Load Manual Overrides</button>
+      <span id="ccStatus" class="hint"></span>
+    </details>
+    <div class="psp-flag" style="margin-top:12px;">If the employee is non-compliant in any area, the manager is responsible for creating a plan to bring the employee into compliance.</div>
+  </div>
+
+  <!-- CODE OF CONDUCT -->
+  <div class="card">
+    <h2>Code of Conduct</h2>
+    <h3 style="font-size:15px;">Arnot Health Code of Conduct and Confidentiality Attestation</h3>
+    <h3>Handling Protected Health Information</h3>
+    <p class="hint"><b>For employees:</b> Each Arnot Health employee shall attest and affirm the following:</p>
+    <ul class="coc-list">
+      <li>I will comply with all applicable federal and state laws and regulations governing the institution and all policies of Arnot Health.</li>
+    </ul>
+    <p class="hint"><b>To maintain and foster this Code of Conduct, as an employee:</b></p>
+    <ul class="coc-list">
+      <li>I will report any concern as soon as I become aware. If I do not feel comfortable reporting the concern to my direct manager, or do not feel the concern was adequately addressed, I will report the concern by means of the Compliance Hotline at ext. 4347 or 607-737-4347. I understand the Compliance Hotline number is listed on the intranet on the Corporate Compliance page or may be accessed via the Arnot Ogden Medical Center main hospital switchboard at 607-737-4100. I understand this concern may be an observation of a lack of compassion or a suspected violation of an organizational policy, federal regulation or law.</li>
+      <li>I will utilize other methods to communicate concerns if necessary. These include directly to the Compliance Officer, member of the Corporate Compliance Committee, President of Arnot Health, Audit Committee Chairperson or the NYS Department of Health. I am aware that a list of these contacts and numbers may be obtained from Health on Demand at ext. 4499 or 607-737-4499.</li>
+    </ul>
+    <p class="hint"><b>In regards to Confidentiality, I hereby acknowledge and attest to the following:</b></p>
+    <ul class="coc-list">
+      <li>I received training regarding New York State and the Federal Government laws and regulations that govern confidentiality and the use and disclosure of our patients' protected health information (PHI), to include highly sensitive information related to HIV, mental health and substance abuse to include but not limited to protocols as set forth in:
+        <ul><li>Public Health Law 27F</li><li>NYS Department of Health Regulation Part 50-4</li></ul>
+      </li>
+      <li>PHI includes any information that identifies an individual and that relates to the individual's health, treatment, or payment for that treatment.</li>
+      <li>I understand that Arnot Health policies forbid my accessing or disclosing PHI unless it is required to perform my job.</li>
+      <li>I understand that access or disclosure applies to information contained within the paper or electronic medical record, as well as information I become visually or verbally aware of in the course of work at Arnot Health.</li>
+      <li>I understand that if in the course of my employment I have access to highly sensitive confidential HIV-related information about patients, their spouse or partner, the confidentiality of this information is protected by law as referenced above and may not be disclosed without authorization and may not be released without a DOH approved release form.</li>
+      <li>Employees are not allowed to access their personal medical record or family members' medical records. Employees who wish to receive copies of their own medical record will contact the Medical Records Department (HIS) and/or set up a portal account.</li>
+    </ul>
+    <p class="hint"><b>In regards to the rules regarding access, disclosure or release of PHI, I acknowledge that:</b></p>
+    <ul class="coc-list">
+      <li>Arnot Health has a "zero tolerance" policy on inappropriate access, disclosure, or release of PHI or any confidential patient information.</li>
+      <li>I understand that it is my responsibility to understand and follow federal and state law, as well as Arnot Health policies in regard to handling all confidential information (PHI), to include HIV related information, that I learn in the course of my employment at AH.</li>
+      <li>I understand that I may not post PHI on any social media website (Facebook, Twitter, etc.).</li>
+      <li>I understand that it is my responsibility to report any breach or suspected breach of PHI.</li>
+      <li>I am subject to disciplinary action, up to and including termination for any violation of Arnot Health policy.</li>
+      <li>I may be held personally liable and subject to fines, criminal charges, and prosecution for a breach of confidentiality.</li>
+      <li>I understand that accessing patient records for personal knowledge or personal purposes is not tolerated.</li>
+      <li>I may not access my personal medical record or family member's medical record.</li>
+      <li>I understand that I am responsible for all access that occurs under my user ID.</li>
+      <li>I understand that these duties and standards apply even if I am no longer employed by Arnot Health.</li>
+      <li>Any questions related to access or disclosure of confidential patient records should be directed to the Arnot Health Privacy Officer or the Health Information Services (Medical Records) department.</li>
+    </ul>
+    <p class="hint">I am aware Arnot Health does not permit any form of retaliation or intimidation regarding the reporting of a situation or concern. By signing this acknowledgement, I affirm I understand the Code of Conduct and my responsibility to report any concerns regarding violations of conduct or compliance.</p>
+    <p class="hint"><b>The documents, policies related to these issues include:</b></p>
+    <ul class="coc-list">
+      <li>HIPAA at Arnot Health (on the Intranet)</li><li>The Patient's Bill of Rights</li><li>Notice of Privacy Practices</li>
+      <li>Confidentiality Related to Medical Records</li><li>HIV confidentiality</li><li>Photographic and Videographic Consent</li>
+      <li>Compliance Reporting and Non-Retaliation</li><li>Password/Passphrase Policy</li><li>Uses &amp; Disclosures of Patient Information</li>
+      <li>Authorization for Release of Information</li><li>Rules, Grounds For Dismissal</li><li>Social Media</li>
+    </ul>
+    <div class="sig-block">
+      <div class="grid2">
+        <div class="field"><label>Print Name</label><input id="cocPrintName"></div>
+        <div class="field"><label>Date</label><input id="cocDate" type="date"></div>
+      </div>
+      <div class="field"><label>Department</label><input id="cocDepartment" value="3B Tele Med-Surg/Stroke"></div>
+      <label>Signature</label>
+      <div class="sigpad-wrap"><canvas id="cocSigPad" class="sigpad" width="600" height="110"></canvas></div>
+      <button class="btn secondary small no-print" onclick="clearSignature('cocSigPad')">Clear Signature</button>
+    </div>
+  </div>
+
+  <!-- CLINICAL METRICS -->
+  <div class="card">
+    <h2>Clinical Compliance Metrics <span style="font-family:Arial,sans-serif;font-size:11px;color:var(--muted);font-weight:normal;">(RN/LPN only)</span></h2>
+    <div class="metric-tiles">
+      <div class="tile" id="tileBCMA"><div class="val">&ndash;</div><div class="lbl">BCMA Compliance</div></div>
+      <div class="tile" id="tilePain"><div class="val">&ndash;</div><div class="lbl">Pain Reassessment Compliance</div></div>
+      <div class="tile" id="tileAbsences"><div class="val">&ndash;</div><div class="lbl">Absences (last 12 mo.)</div></div>
+    </div>
+  </div>
+
+  <!-- OVERALL RATINGS ROLLUP (internal working view — not part of the printed packet) -->
+  <div class="card no-print">
+    <h2>Overall Ratings <span style="font-family:Arial,sans-serif;font-size:11px;color:var(--muted);font-weight:normal;">(working view — not included when printing)</span></h2>
+    <table class="rating-scale-ref" style="margin-bottom:14px;">
+      <tr><th style="width:260px;">Review Category</th><th>Rating</th></tr>
+      <tr><td>Competencies/Overall Review Rating</td><td id="rollupScore" style="font-weight:bold;">Incomplete</td></tr>
+    </table>
+    <table class="rating-scale-ref" style="margin-bottom:14px;">
+      <tr><th style="width:260px;">Review Category</th><th>Status</th></tr>
+      <tr><td>Compliance</td><td id="rollupCompliance">&ndash;</td></tr>
+      <tr><td>Code of Conduct</td><td>
+        <select id="codeOfConduct" onchange="refreshRollups()"><option value="">Select</option><option>Compliant</option><option>Non-Compliant</option></select>
+      </td></tr>
+      <tr><td>Clinical Competencies (if applicable, please attach)</td><td>
+        <select id="clinicalComp"><option value="">Select / N/A</option><option>Compliant</option><option>Non-Compliant</option></select>
+      </td></tr>
+    </table>
+    <div class="psp-flag" style="margin-bottom:14px;">An overall rating of 1.00&ndash;1.99 will require a Performance Success Plan (PSP). It also may be appropriate to complete a PSP for an overall rating of 2.00&ndash;2.99. Any PSP must be attached to the Annual Evaluation and submitted to Human Resources.</div>
+
+    <div class="field">
+      <label>Any areas of the evaluation scoring lower than "3" have been reviewed with the employee, setting clear expectations for improvement.</label>
+      <select id="reviewedWithEmployee" style="max-width:220px;"><option value="">Select from dropdown</option><option>Yes</option><option>N/A</option></select>
+    </div>
+
+    <h3>Written Disciplines Issued (if applicable)</h3>
+    <table class="rating-scale-ref" id="disciplinesTable" style="margin-bottom:8px;">
+      <tr><th>Discipline</th><th style="width:150px;">Date</th><th style="width:36px;"></th></tr>
+    </table>
+    <button class="btn secondary small" onclick="addDisciplineRow()">+ Add Row</button>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="card">
+    <h2>Comments &amp; Goals</h2>
+    <h3>Overall Employee Comments/Self Assessment (optional)</h3>
+    <textarea id="employeeSelfAssessment" rows="3" placeholder="Optional &mdash; the employee may add their own comments here."></textarea>
+
+    <h3>Overall Leader Comments/Assessment</h3>
+    <textarea id="overallComments" rows="4" placeholder="Fills in once all 10 ratings are entered &mdash; edit before finalizing."></textarea>
+    <button class="btn secondary small no-print" style="margin-top:6px;" onclick="generateSummaryAndGoals()">Generate Overall Comments</button>
+
+    <h3>Employee Professional Short/Long-term Goals (SMART)</h3>
+    <textarea id="smartGoals" rows="6" placeholder="Enter the employee's professional short/long-term goals here."></textarea>
+  </div>
+
+  <!-- SIGNATURES -->
+  <div class="card">
+    <h2>Signatures</h2>
+    <div class="sig-row">
+      <div><label>Employee Name</label><input id="empSigName"></div>
+      <div><label>Employee Signature</label>
+        <div class="sigpad-wrap"><canvas id="empSigPad" class="sigpad" width="380" height="90"></canvas></div>
+        <button class="btn secondary small no-print" style="margin-top:4px;" onclick="clearSignature('empSigPad')">Clear</button>
+      </div>
+      <div><label>Date</label><input id="empSigDate" type="date"></div>
+    </div>
+    <div class="sig-row">
+      <div><label>Leader Name</label><input id="leaderSigName" value="Ron Higley"></div>
+      <div><label>Leader Signature</label>
+        <div class="sigpad-wrap"><canvas id="leaderSigPad" class="sigpad" width="380" height="90"></canvas></div>
+        <button class="btn secondary small no-print" style="margin-top:4px;" onclick="clearSignature('leaderSigPad')">Clear</button>
+      </div>
+      <div><label>Date</label><input id="leaderSigDate" type="date"></div>
+    </div>
+    <div class="hint">Sign with a mouse or finger/stylus on a touchscreen. Signatures are saved with the record and will also appear when this page is printed.</div>
+  </div>
+
+</div>
+
+<script>
+const RATING_LABELS = {5:"Exemplary",4:"Exceeds Expectations",3:"Meets Expectations",2:"Needs Improvement",1:"Unsatisfactory"};
+
+// ---- Competency Library: rating-level language + role-specific example clause ----
+const COMPETENCIES = [
+{id:"cust", section:"Communication, Collaboration, and Service", name:"Customer-Centered Focus",
+ desc:"Anticipates, understands, and addresses the needs of the customer. Puts the customer first.",
+ values:"Excellence, Compassion, Patient-Centered Health Care",
+ considerations:"Responds promptly to patient/client needs; Identifies and addresses problems in a timely manner; Adapts approach to meet patient or client needs; Uses strong foundation of knowledge and skills to improve department and organization performance.",
+ rating:{
+  5:"Reads a room before anyone asks for anything — families and coworkers describe feeling looked after the moment they interact with them.",
+  4:"Rarely lets a patient or family need sit; often checks back in without a prompt.",
+  3:"Responds promptly to patient and family needs and adapts approach appropriately to meet them.",
+  2:"Patient and family needs get missed or delayed often enough that it's been noticed by others on the unit.",
+  1:"Patients and families are regularly left waiting on things that should have been caught right away; this needs to change now."},
+ role:{
+  RN:"e.g., proactively rounded on a confused stroke patient's family to explain the plan of care before they had to ask.",
+  LPN:"e.g., checked in on patients between physician visits to answer questions and relay concerns to the RN promptly.",
+  CA:"e.g., anticipated a patient's mobility needs and had the gait belt and walker ready before the nurse asked."}},
+{id:"self", section:"Communication, Collaboration, and Service", name:"Self-awareness",
+ desc:"Mindful of his/her/their strengths and weaknesses. Recognizes his/her/their own frame of mind and how it affects others and performance.",
+ values:"Teamwork, Compassion, Patient-Centered Health Care",
+ considerations:"Welcomes and treats patients, visitors, and employees in a warm, friendly manner; Maintains composure and focus under pressure and during crises; Presents a professional image by demonstrating genuine enthusiasm and interest in patients, visitors, and employees; Projects a positive image of organization when speaking with others.",
+ rating:{
+  5:"Steady in a crisis and honest about their own blind spots — other staff look to them when things get tense.",
+  4:"Keeps a level head under pressure and owns their reactions without much prompting.",
+  3:"Maintains composure and focus under pressure and presents a professional, positive image with others.",
+  2:"Frustration or stress shows through to patients and coworkers more than it should.",
+  1:"Loses composure in ways that are affecting the people around them; this needs to be addressed right away."},
+ role:{
+  RN:"e.g., stayed calm and organized during a rapid response, then debriefed with the team afterward without deflecting.",
+  LPN:"e.g., recognized frustration building during a busy med pass and asked for help rather than letting it show to patients.",
+  CA:"e.g., asked for a peer's perspective after a difficult family interaction instead of venting on the floor."}},
+{id:"comm", section:"Communication, Collaboration, and Service", name:"Communication",
+ desc:"Communicates in a clear, effective, and appropriate manner that meets the needs of the audience.",
+ values:"Teamwork, Compassion, Patient-Centered Health Care",
+ considerations:"Listens actively for understanding; Asks for clarification when needed; Presents information effectively (oral and/or written); Demonstrates a good understanding of coworkers' points of view. Demonstrates clear, positive, respectful, and timely communication with patients, visitors, and employees.",
+ rating:{
+  5:"Other staff specifically ask for their help wording a hard conversation because they get it right every time.",
+  4:"Explains things clearly to a wide range of people and rarely leaves anyone confused.",
+  3:"Listens actively, asks clarifying questions, and communicates clearly, positively, and on time with patients, visitors, and staff.",
+  2:"Messages sometimes come out unclear or land late, and it's causing avoidable confusion.",
+  1:"Breakdowns in communication are affecting patient care or the team; this is a priority fix."},
+ role:{
+  RN:"e.g., gave a clear, organized SBAR to the provider during a change in condition and confirmed the plan before hanging up.",
+  LPN:"e.g., communicated a subtle patient change to the RN promptly using clear, specific language.",
+  CA:"e.g., reported a patient's fall risk change to the RN right away instead of waiting for shift report."}},
+{id:"collab", section:"Communication, Collaboration, and Service", name:"Collaboration/Team Player",
+ desc:"Develops and maintains effective professional relationships with others, shares information, and contributes to a positive team culture.",
+ values:"Excellence, Teamwork",
+ considerations:"Builds relationships with others; Communicates openly and honestly; Avoids gossip; Focuses on solutions instead of problems; Respects others regardless of differences.",
+ rating:{
+  5:"The person a struggling teammate calls first — genuinely raises the team's culture just by being on shift.",
+  4:"Pitches in for others without being asked and keeps things positive on a hard day.",
+  3:"Builds relationships with others, communicates openly and honestly, and focuses on solutions instead of problems.",
+  2:"Some friction with coworkers or reluctance to pitch in has come up more than once.",
+  1:"Ongoing conflict or unwillingness to work with the team is damaging morale and needs to stop."},
+ role:{
+  RN:"e.g., picked up a task for a teammate who was behind during a high-acuity shift without being asked.",
+  LPN:"e.g., proactively offered to help a fellow LPN catch up on treatments during a short-staffed shift.",
+  CA:"e.g., helped a new CA learn the unit routine and answered questions patiently throughout orientation."}},
+{id:"adapt", section:"Solutions and Impact", name:"Adaptability/Resiliency",
+ desc:"Receives new roles and responsibilities with enthusiasm. Adjusts actions or approach to suit a new situation.",
+ values:"Teamwork, Patient-Centered Health Care",
+ considerations:"Takes steps to prepare for change; Adjusts well to new situations and priorities; Takes initiative to learn new skills; Open to feedback.",
+ rating:{
+  5:"Treats a sudden change in plan as routine and helps everyone else keep pace with it too.",
+  4:"Picks up new expectations quickly, usually before being walked through them.",
+  3:"Adjusts well to new situations and priorities and takes initiative to learn new skills.",
+  2:"Pushback or slow adjustment to change has been noticeable and is starting to affect the team.",
+  1:"Refusal or inability to adjust to shifting assignments is creating real problems and needs immediate attention."},
+ role:{
+  RN:"e.g., took on a heavier assignment during a callout without complaint and adjusted the plan of care smoothly.",
+  LPN:"e.g., learned the new wound care protocol quickly when it rolled out mid-shift.",
+  CA:"e.g., shifted easily between 3B and 3C coverage when the float board changed twice in one shift."}},
+{id:"judgment", section:"Solutions and Impact", name:"Informed Judgment",
+ desc:"Makes decisions based on knowledge or education, not opinions or feelings.",
+ values:"Excellence, Patient-Centered Health Care",
+ considerations:"Gathers most important information to solve problems effectively; Considers alternatives before making decisions and taking action; Anticipates possible problems and takes appropriate action; Uses sound logic and experience to identify and solve problems.",
+ rating:{
+  5:"Catches what others miss by connecting small details before they become a bigger problem.",
+  4:"Weighs the facts carefully before acting, even when there's pressure to move fast.",
+  3:"Gathers important information, considers alternatives, and uses sound logic to solve problems.",
+  2:"Calls have been made without gathering enough information first; this needs more discipline.",
+  1:"Decisions aren't holding up to scrutiny and oversight is needed until this improves."},
+ role:{
+  RN:"e.g., recognized early signs of decompensation and escalated based on trend data, not just a single vital sign.",
+  LPN:"e.g., held a medication appropriately and confirmed with the RN when something didn't look right on the MAR.",
+  CA:"e.g., used judgment to reposition a fall-risk patient and notify the nurse rather than waiting for rounding."}},
+{id:"resource", section:"Solutions and Impact", name:"Resourcefulness",
+ desc:"Fixes issues and finds solutions, even when the resources for doing so aren't immediately apparent.",
+ values:"Excellence, Teamwork",
+ considerations:"Quickly learns new processes, procedures, requirements, tools, applications, and systems; Knows what needs to be done and proceeds effectively with minimal direction; Generates effective ideas and solutions; Serves as the \"go to\" person when appropriate; Anticipates concerns or obstacles and works to find appropriate solutions.",
+ rating:{
+  5:"When something breaks or goes missing, this is the person who has already solved it by the time anyone else notices.",
+  4:"Works around obstacles on their own and rarely needs a nudge in the right direction.",
+  3:"Knows what needs to be done, proceeds effectively with minimal direction, and generates solutions.",
+  2:"Tends to wait for direction on things they should be able to work out independently.",
+  1:"Can't problem-solve independently even with support in place; this is holding the role back."},
+ role:{
+  RN:"e.g., figured out a workaround for a broken IV pump mid-shift instead of waiting on biomed.",
+  LPN:"e.g., tracked down missing supplies for a dressing change without needing the charge nurse to intervene.",
+  CA:"e.g., found an alternate way to safely transfer a bariatric patient when the usual equipment was in use."}},
+{id:"passion", section:"Trust, Passion, and Accountability", name:"Passion for the Mission",
+ desc:"Acts in accordance with company values; involved in the work community and gives back to others.",
+ values:"Excellence, Integrity, Patient-Centered Health Care",
+ considerations:"Actively cooperates as part of a team in support of work priorities; Seeks opportunities to help others in accomplishing work priorities; Demonstrates sensitivity and appropriate concern for others; Finds efficient and cost-saving ways to accomplish work and makes appropriate suggestions for improvements.",
+ rating:{
+  5:"It shows in how they talk about the unit — genuinely invested, and it pulls others along with them.",
+  4:"Shows up for unit priorities beyond their own assignment more often than most.",
+  3:"Actively cooperates as part of the team and seeks opportunities to help others accomplish work priorities.",
+  2:"Engagement with the team and unit priorities has been coming and going lately.",
+  1:"Investment in the team and patient outcomes is hard to see right now and needs to be rebuilt."},
+ role:{
+  RN:"e.g., volunteered to help plan the unit's stroke awareness event on top of a full patient assignment.",
+  LPN:"e.g., regularly checks on coworkers having a hard shift and offers to help without being asked.",
+  CA:"e.g., consistently volunteers for extra shifts during short-staffing without prompting."}},
+{id:"account", section:"Trust, Passion, and Accountability", name:"Accountability/Taking Ownership",
+ desc:"Takes ownership of mistakes and how to resolve them; keeps self and coworkers accountable.",
+ values:"Excellence, Integrity",
+ considerations:"Accepts responsibility for actions and decisions; Takes action to make improvements; Encourages accountability in others; Challenges self and others to improve outcomes.",
+ rating:{
+  5:"Owns a mistake the second it happens, fixes it, and turns it into something the whole unit learns from.",
+  4:"Comes forward about mistakes quickly and follows through on fixing them without being chased.",
+  3:"Accepts responsibility for actions and decisions and takes action to make improvements.",
+  2:"Owning mistakes has been hit-or-miss; sometimes needs a nudge to follow through.",
+  1:"Mistakes are being deflected or minimized rather than owned, and that pattern needs to stop."},
+ role:{
+  RN:"e.g., self-reported a near-miss medication error immediately and helped build the fix into the unit huddle.",
+  LPN:"e.g., owned a documentation gap right away and corrected it without being asked twice.",
+  CA:"e.g., told the RN promptly after missing a scheduled vitals check instead of letting it go unnoticed."}},
+{id:"trust", section:"Trust, Passion, and Accountability", name:"Trust/Integrity",
+ desc:"Is reliable, displays sound judgment, honesty, transparency, and loyalty.",
+ values:"Excellence, Integrity, Patient-Centered Health Care",
+ considerations:"Follows rules, processes, and procedures; Follows through on commitments; Maintains proper and efficient use of time and resources; Follows prescribed safety protocols; Focuses on the highest priorities; Demonstrates compliance with regulatory requirements.",
+ rating:{
+  5:"The kind of employee you'd trust with anything, no follow-up needed, even when it's a hard or sensitive situation.",
+  4:"Commitments and safety protocols get done right, without having to be checked on.",
+  3:"Follows rules, processes, and protocols and follows through on commitments and priorities.",
+  2:"Follow-through on protocols or commitments has slipped enough to be noticeable.",
+  1:"A pattern of not following protocol or commitments has developed and needs to be corrected now."},
+ role:{
+  RN:"e.g., consistently completes documentation and safety checks on time, even during heavy assignments.",
+  LPN:"e.g., reliably follows the medication administration protocol without shortcuts, even when busy.",
+  CA:"e.g., completes rounding and vitals on schedule and flags any missed task instead of letting it slide."}},
+];
+
+let ccData = []; // manual-override records loaded via paste
+let ccStateCache = null;   // raw Command Center app_state, fetched live
+let ccLastSync = null;
+
+const SB_URL = 'https://xnsdvdfceflmagfhpycw.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhuc2R2ZGZjZWZsbWFnZmhweWN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MTk1NjgsImV4cCI6MjA5NDk5NTU2OH0.UzKZQj4BLxPpH_OCwQR8LyDUeP9YlKn5UtXRFUFaYKA';
+
+let ccRoster = []; // [{name, role, status}] from Command Center's float_roster
+
+async function fetchCCAppState(){
+  const r = await fetch(`${SB_URL}/rest/v1/tracker_state?key=in.(app_state,float_roster)&select=key,value`, {
+    headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` }
+  });
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const rows = await r.json();
+  const appRow = rows.find(r=>r.key==='app_state');
+  const rosterRow = rows.find(r=>r.key==='float_roster');
+  if(rosterRow && rosterRow.value) ccRoster = JSON.parse(rosterRow.value);
+  if(!appRow || !appRow.value) throw new Error('No app_state row found');
+  return JSON.parse(appRow.value);
+}
+
+function populateEmployeeDropdown(){
+  const sel = document.getElementById('empName');
+  const prevVal = sel.value;
+  if(!ccRoster.length){
+    sel.innerHTML = '<option value="">Could not load roster — type not available, use manual override</option>';
+    return;
+  }
+  const sorted = [...ccRoster].sort((a,b)=> (a.role===b.role ? a.name.localeCompare(b.name) : a.role.localeCompare(b.role)));
+  sel.innerHTML = '<option value="">Select employee…</option>' +
+    sorted.map(s=>`<option value="${s.name}" data-role="${s.role}">${s.name} (${s.role})</option>`).join('');
+  if(prevVal && sorted.some(s=>s.name===prevVal)) sel.value = prevVal;
+}
+
+function onEmployeeSelected(){
+  const sel = document.getElementById('empName');
+  const opt = sel.options[sel.selectedIndex];
+  const role = opt ? opt.dataset.role : null;
+  if(role && ['RN','LPN','CA'].includes(role)) document.getElementById('empRole').value = role;
+  onNameOrRoleChange();
+}
+
+// Find the most recent YYYY-MM key (within last 12 months) that has data for a given qualityData field pair
+function mostRecentQuality(qData, numField, denField){
+  if(!qData) return null;
+  const now = new Date();
+  for(let i=0;i<12;i++){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    const rec = qData[key];
+    if(rec && rec[denField]) return { pct: Math.round((rec[numField]/rec[denField])*100), month:key };
+  }
+  return null;
+}
+
+function fitTestStatus(certs){
+  const raw = certs && certs.FitTest;
+  if(!raw) return 'Unknown';
+  const d = new Date(raw);
+  if(isNaN(d)) return 'Unknown';
+  return d >= new Date() ? 'Compliant' : 'Non-Compliant';
+}
+
+function buildLiveRecord(name){
+  if(!ccStateCache || !name) return null;
+  const norm = name.trim().toLowerCase();
+  // MASTER_STAFF-style matching isn't available client-side here, so match directly against the keyed objects
+  const findKey = (obj) => obj ? Object.keys(obj).find(k => k.trim().toLowerCase()===norm) : null;
+
+  const qKey = findKey(ccStateCache.qualityData);
+  const qData = qKey ? ccStateCache.qualityData[qKey] : null;
+  const bcma = mostRecentQuality(qData, 'scans', 'scanTotal');
+  const pain = mostRecentQuality(qData, 'pain', 'painTotal');
+
+  const aKey = findKey(ccStateCache.absenceLog);
+  const absLog = aKey ? (ccStateCache.absenceLog[aKey]||[]) : [];
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-365);
+  const cutoffStr = cutoff.toISOString().split('T')[0];
+  const absences = absLog.filter(e => e.date >= cutoffStr).length;
+
+  const cKey = findKey(ccStateCache.certs);
+  const certs = cKey ? ccStateCache.certs[cKey] : null;
+
+  if(!qKey && !aKey && !cKey) return null; // not found in CC at all
+
+  return {
+    name,
+    fitTesting: fitTestStatus(certs),
+    bcma: bcma ? bcma.pct : null,
+    painReassessment: pain ? pain.pct : null,
+    absences: (aKey ? absences : null),
+    // not tracked in Command Center yet:
+    meritFair: null, sexHarassTrain: null, empEval: null, fluVaccine: null, tbReassessment: null,
+  };
+}
+
+async function refreshFromCC(manual){
+  const statusEl = document.getElementById('ccSyncStatus');
+  statusEl.textContent = 'Syncing…';
+  try{
+    ccStateCache = await fetchCCAppState();
+    ccLastSync = new Date();
+    populateEmployeeDropdown();
+    statusEl.textContent = `Synced at ${ccLastSync.toLocaleTimeString()} (${ccRoster.length} staff).`;
+  }catch(e){
+    statusEl.textContent = manual
+      ? 'Could not load data — use the manual override below.'
+      : 'Data not reachable yet — use the manual override below if needed.';
+  }
+  applyCCDataToForm();
+}
+
+function buildCompetencyUI(){
+  const list = document.getElementById('competencyList');
+  let lastSection = null; let html = '';
+  COMPETENCIES.forEach(c=>{
+    if(c.section !== lastSection){
+      html += `<h3 style="background:var(--header-blue);color:#0f2a44;padding:8px 12px;border-radius:4px;margin-top:20px;">${c.section}</h3>`;
+      lastSection = c.section;
+    }
+    html += `
+    <div class="comp" data-id="${c.id}">
+      <div class="comp-name">
+        <span>${c.name}</span>
+        <select class="rating-select" id="rate_${c.id}" onchange="onRatingChange('${c.id}')">
+          <option value="">Rating</option>
+          <option value="5">5 - Exemplary</option>
+          <option value="4">4 - Exceeds Expectations</option>
+          <option value="3">3 - Meets Expectations</option>
+          <option value="2">2 - Needs Improvement</option>
+          <option value="1">1 - Unsatisfactory</option>
+        </select>
+      </div>
+      <div class="comp-body">
+        <div class="desc">${c.desc}</div>
+        <div class="comp-values"><b>Values reflected:</b> ${c.values}<br><b>Considerations:</b> ${c.considerations}</div>
+        <div class="example-box empty" id="example_${c.id}">Select a rating to generate a suggested example.</div>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function getFirstName(){
+  const full = (document.getElementById('empName')?.value || '').trim();
+  if(!full) return 'The employee';
+  if(full.includes(',')){
+    const parts = full.split(',');
+    return parts[1] ? parts[1].trim().split(/\s+/)[0] : parts[0].trim();
+  }
+  return full.split(/\s+/)[0];
+}
+
+function libraryText(compId, rating, role){
+  const c = COMPETENCIES.find(x=>x.id===compId);
+  if(!c || !rating) return '';
+  const first = getFirstName();
+  const example = c.role[role].replace(/^e\.g\.,\s*/,'');
+  return `${c.rating[rating]} (${first} ${example})`;
+}
+
+function onRatingChange(compId){
+  regenerateExample(compId);
+  refreshSectionComments();
+  refreshScore();
+  maybeAutoDraftOverall();
+}
+
+function regenerateExample(compId){
+  const rating = document.getElementById('rate_'+compId).value;
+  const role = document.getElementById('empRole').value;
+  const box = document.getElementById('example_'+compId);
+  if(!rating){ box.textContent='Select a rating to generate a suggested example.'; box.classList.add('empty'); return; }
+  box.textContent = libraryText(compId, rating, role);
+  box.classList.remove('empty');
+}
+
+let _nameDebounce = null;
+function onNameOrRoleChange(){
+  COMPETENCIES.forEach(c=>regenerateExample(c.id));
+  refreshSectionComments();
+  applyCCDataToForm();
+  clearTimeout(_nameDebounce);
+  _nameDebounce = setTimeout(()=>refreshFromCC(false), 500);
+}
+
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function refreshSectionComments(){
+  const sections = [...new Set(COMPETENCIES.map(c=>c.section))];
+  const container = document.getElementById('sectionComments');
+  const prior = {};
+  sections.forEach((s,i)=>{
+    const ta = document.getElementById('sectionComment_'+i);
+    if(ta) prior[i] = { value: ta.value, oldAuto: decodeURIComponent(ta.dataset.auto||'') };
+  });
+  let html = '';
+  sections.forEach((s,i)=>{
+    const comps = COMPETENCIES.filter(c=>c.section===s);
+    const parts = comps.map(c=>{
+      const rating = document.getElementById('rate_'+c.id)?.value;
+      if(!rating) return null;
+      // Just the rating-level assessment here — the specific example already lives in the box above, under each competency.
+      return `${c.name}: ${c.rating[rating]}`;
+    }).filter(Boolean);
+    const auto = parts.join('\n');
+    const p = prior[i];
+    // Keep the user's edit only if it's non-empty and differs from the last auto-generated text.
+    // Otherwise (first render, or the box still matches what we generated before), refresh it.
+    const useValue = (p && p.value !== '' && p.value !== p.oldAuto) ? p.value : auto;
+    html += `<div class="field section-comment"><label>${s}</label>
+      <textarea rows="3" id="sectionComment_${i}" data-auto="${encodeURIComponent(auto)}">${escapeHtml(useValue)}</textarea></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function refreshScore(){
+  const ratings = COMPETENCIES.map(c=>parseFloat(document.getElementById('rate_'+c.id)?.value)).filter(v=>!isNaN(v));
+  const scoreEl = document.getElementById('overallScore');
+  const pspEl = document.getElementById('pspFlag');
+  if(ratings.length < COMPETENCIES.length){
+    scoreEl.textContent = ratings.length ? `Incomplete (${ratings.length}/${COMPETENCIES.length})` : 'Incomplete';
+    scoreEl.classList.add('incomplete');
+    pspEl.innerHTML='';
+    return null;
+  }
+  scoreEl.classList.remove('incomplete');
+  const avg = ratings.reduce((a,b)=>a+b,0)/ratings.length;
+  const rounded = avg.toFixed(1);
+  scoreEl.textContent = rounded;
+  if(avg < 2.0){
+    pspEl.innerHTML = `<div class="psp-flag">Score under 2.00 &ndash; a Performance Success Plan (PSP) is required.</div>`;
+  } else if(avg < 3.0){
+    pspEl.innerHTML = `<div class="psp-flag">Score 2.00&ndash;2.99 &ndash; a PSP may be appropriate.</div>`;
+  } else {
+    pspEl.innerHTML = '';
+  }
+  refreshRollups();
+  return avg;
+}
+
+function refreshRollups(){
+  const scoreEl = document.getElementById('overallScore');
+  const rollupScore = document.getElementById('rollupScore');
+  if(rollupScore){ rollupScore.textContent = scoreEl.textContent; rollupScore.style.color = scoreEl.classList.contains('incomplete') ? 'var(--bad)' : ''; }
+  const pill = document.getElementById('overallCompliancePill');
+  const rollupCompliance = document.getElementById('rollupCompliance');
+  if(rollupCompliance && pill) rollupCompliance.textContent = pill.textContent;
+}
+
+// ---- Compliance ----
+// liveTracked=true tasks are pulled from Command Center; the rest need a manual dropdown since CC doesn't track them yet
+const COMPLIANCE_TASKS = [
+  {key:'meritFair', label:'Completion of Merit Fair', liveTracked:false},
+  {key:'sexHarassTrain', label:'Completion of Sexual Harassment Training', liveTracked:false},
+  {key:'fitTesting', label:'Completion of Fit Testing ("Complete" if N/A)', liveTracked:true},
+  {key:'empEval', label:'Completion of Employee Evaluation', liveTracked:false},
+  {key:'fluVaccine', label:'Met flu vaccine requirements', liveTracked:false},
+  {key:'tbReassessment', label:'Completion of TB reassessment', liveTracked:false},
+];
+
+function buildComplianceUI(){
+  const list = document.getElementById('complianceList');
+  list.innerHTML = COMPLIANCE_TASKS.map(t=>{
+    if(t.liveTracked){
+      return `<div class="rowline" data-key="${t.key}" style="flex-wrap:wrap;">
+        <span>${t.label}</span>
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span class="status-pill pill-unknown no-print" id="pill_${t.key}">No data</span>
+          <select id="manual_${t.key}" style="width:150px;" onchange="onManualComplianceChange('${t.key}')">
+            <option value="">Use synced value</option><option>Compliant</option><option>Non-Compliant</option>
+          </select>
+        </span>
+      </div>`;
+    }
+    return `<div class="rowline" data-key="${t.key}">
+      <span>${t.label} <span class="hint" style="margin-left:4px;">(set manually)</span></span>
+      <select id="manual_${t.key}" style="width:170px;" onchange="onManualComplianceChange('${t.key}')">
+        <option value="">Select</option><option>Compliant</option><option>Non-Compliant</option>
+      </select>
+    </div>`;
+  }).join('');
+}
+
+function onManualComplianceChange(key){
+  const val = document.getElementById('manual_'+key).value;
+  const name = document.getElementById('empName').value;
+  if(!name) return;
+  let rec = ccData.find(r=>(r.name||'').trim().toLowerCase()===name.trim().toLowerCase());
+  if(!rec){ rec = {name}; ccData.push(rec); }
+  rec[key] = val || null;
+  applyCCDataToForm();
+}
+
+function findCCRecord(name){
+  if(!name) return null;
+  const norm = name.trim().toLowerCase();
+  const live = buildLiveRecord(name);
+  const manual = ccData.find(r => (r.name||'').trim().toLowerCase() === norm) || null;
+  if(!live && !manual) return null;
+  // manual overrides win field-by-field wherever it provides a non-null value
+  return { ...(live||{name}), ...(manual||{}) };
+}
+
+function applyCCDataToForm(){
+  const name = document.getElementById('empName').value;
+  const role = document.getElementById('empRole').value;
+  const rec = findCCRecord(name);          // merged: manual overrides win
+  const liveOnly = buildLiveRecord(name);   // raw Command Center value only, for the pill
+
+  let anyNonCompliant = false; let anyUnresolved = false; let anyKnown = false;
+  COMPLIANCE_TASKS.forEach(t=>{
+    const manual = ccData.find(r=>(r.name||'').trim().toLowerCase()===((name||'').trim().toLowerCase()))?.[t.key] || '';
+    if(t.liveTracked){
+      const pill = document.getElementById('pill_'+t.key);
+      const sel = document.getElementById('manual_'+t.key);
+      const raw = liveOnly ? (liveOnly[t.key] || 'Unknown') : 'No data';
+      pill.textContent = raw;
+      pill.className = 'status-pill ' + (raw==='Compliant' ? 'pill-compliant' : raw==='Non-Compliant' ? 'pill-noncompliant' : 'pill-unknown no-print');
+      if(sel && sel.value !== manual) sel.value = manual;
+      const effective = manual || (raw==='Compliant' || raw==='Non-Compliant' ? raw : '');
+      if(effective){ anyKnown = true; if(effective!=='Compliant') anyNonCompliant = true; }
+      else { anyUnresolved = true; }
+    } else {
+      const sel = document.getElementById('manual_'+t.key);
+      if(sel && sel.value !== manual) sel.value = manual;
+      if(manual){ anyKnown = true; if(manual!=='Compliant') anyNonCompliant = true; }
+      else { anyUnresolved = true; }
+    }
+  });
+  const overallPill = document.getElementById('overallCompliancePill');
+  if(anyNonCompliant){ overallPill.textContent='Non-Compliant'; overallPill.className='status-pill pill-noncompliant'; }
+  else if(anyUnresolved){
+    overallPill.textContent = anyKnown ? 'Incomplete' : 'No data';
+    overallPill.className = 'status-pill pill-unknown' + (anyKnown ? '' : ' no-print');
+  }
+  else { overallPill.textContent='Compliant'; overallPill.className='status-pill pill-compliant'; }
+
+  // Clinical metrics
+  const tBcma = document.getElementById('tileBCMA');
+  const tPain = document.getElementById('tilePain');
+  const tAbs = document.getElementById('tileAbsences');
+  const showClinical = (role==='RN' || role==='LPN');
+  [tBcma,tPain].forEach(t=>t.classList.toggle('na', !showClinical));
+  if(!showClinical){
+    tBcma.querySelector('.val').textContent='N/A'; tPain.querySelector('.val').textContent='N/A';
+  } else if(rec){
+    tBcma.querySelector('.val').textContent = (rec.bcma!=null? rec.bcma+'%':'–');
+    tPain.querySelector('.val').textContent = (rec.painReassessment!=null? rec.painReassessment+'%':'–');
+  } else {
+    tBcma.querySelector('.val').textContent='–'; tPain.querySelector('.val').textContent='–';
+  }
+  tAbs.querySelector('.val').textContent = rec && rec.absences!=null ? rec.absences : '–';
+  refreshRollups();
+}
+
+function loadCCPaste(){
+  const raw = document.getElementById('ccPaste').value.trim();
+  const statusEl = document.getElementById('ccStatus');
+  if(!raw){ statusEl.textContent='Nothing pasted.'; return; }
+  try{
+    const parsed = JSON.parse(raw);
+    ccData = Array.isArray(parsed) ? parsed : [parsed];
+    statusEl.textContent = `Loaded ${ccData.length} record(s).`;
+    applyCCDataToForm();
+  }catch(e){
+    statusEl.textContent = 'Could not parse JSON — check formatting.';
+  }
+}
+
+// ---- Overall summary + SMART goals ----
+let overallAutoDrafted = false;
+function maybeAutoDraftOverall(){
+  const avg = refreshScore();
+  if(avg===null) return;
+  if(!overallAutoDrafted){
+    generateSummaryAndGoals();
+    overallAutoDrafted = true;
+  }
+}
+
+function generateSummaryAndGoals(){
+  const role = document.getElementById('empRole').value;
+  const name = document.getElementById('empName').value || 'The employee';
+  const ratings = COMPETENCIES.map(c=>({c, r: parseFloat(document.getElementById('rate_'+c.id)?.value)})).filter(x=>!isNaN(x.r));
+  if(ratings.length===0) return;
+  const avg = (ratings.reduce((a,b)=>a+b.r,0)/ratings.length);
+  const sorted = [...ratings].sort((a,b)=>a.r-b.r);
+  const lowest = sorted.slice(0,2);
+  const strongest = sorted[sorted.length-1];
+
+  let summary = `${name} earned an overall competency score of ${avg.toFixed(1)} (${RATING_LABELS[Math.round(avg)]||''}) for this review period. `;
+  if(lowest[0].r <= 2){
+    summary += `The most immediate area for growth is ${lowest[0].c.name.toLowerCase()}, which is scoring below expectations and should be prioritized. `;
+  } else if(lowest[0].r === 3){
+    summary += `${lowest[0].c.name} is meeting expectations but has room to grow toward the next level. `;
+  }
+  summary += `${strongest.c.name} stands out as a consistent strength this period.`;
+  summary += `\n\nContinue to lead by example and remember to be professional to our patients and our staff. Assist in ensuring patient safety on the floor by turning and repositioning patients and that all fall interventions are in place.`;
+
+  // Below a 2.0 overall, fold SMART goals directly into the leader comments so they're front and center for a PSP.
+  if(avg < 2.0){
+    let goals = '';
+    lowest.filter(x=>x.r<=3).forEach(x=>{
+      goals += `\n\nSMART Goal — ${x.c.name}:\n`;
+      goals += `  Specific: Improve ${x.c.name.toLowerCase()} by consistently ${x.c.role[role].replace(/^e\.g\.,\s*/,'')}\n`;
+      goals += `  Measurable: Move rating from ${x.r} to at least a 3 by the next check-in.\n`;
+      goals += `  Achievable: Focus on one or two specific shifts per week to practice this behavior with feedback from a preceptor or charge nurse.\n`;
+      goals += `  Relevant: Directly supports the ${x.c.section} standard on this unit.\n`;
+      goals += `  Time-bound: Reassess progress in 60-90 days.`;
+    });
+    summary += goals;
+  }
+  document.getElementById('overallComments').value = summary;
+  // Employee Professional Short/Long-term Goals is left blank for the manager to complete manually.
+}
+
+// ---- Export / Import full state ----
+function collectState(){
+  const disciplines = [];
+  document.querySelectorAll('#disciplinesTable tr').forEach((row,i)=>{
+    if(i===0) return; // header row
+    const inputs = row.querySelectorAll('input');
+    if(inputs.length>=2) disciplines.push({ desc: inputs[0].value, date: inputs[1].value });
+  });
+  const state = {
+    empName: empName.value, empId: empId.value, empRole: empRole.value, empUnit: empUnit.value,
+    reviewYear: reviewYear.value, reviewDate: reviewDate.value, managerName: managerName.value, jobTitleCC: jobTitleCC.value,
+    ratings:{}, sectionComments:{}, overallComments: overallComments.value, smartGoals: smartGoals.value,
+    employeeSelfAssessment: employeeSelfAssessment.value,
+    codeOfConduct: codeOfConduct.value, clinicalComp: clinicalComp.value, reviewedWithEmployee: reviewedWithEmployee.value, ccData: ccData,
+    disciplines: disciplines,
+    coc: { printName: cocPrintName.value, date: cocDate.value, department: cocDepartment.value, sig: getSignatureDataURL('cocSigPad') },
+    empSig: { name: empSigName.value, date: empSigDate.value, sig: getSignatureDataURL('empSigPad') },
+    leaderSig: { name: leaderSigName.value, date: leaderSigDate.value, sig: getSignatureDataURL('leaderSigPad') },
+  };
+  COMPETENCIES.forEach(c=> state.ratings[c.id] = document.getElementById('rate_'+c.id).value );
+  document.querySelectorAll('[id^="sectionComment_"]').forEach(el=> state.sectionComments[el.id]=el.value );
+  return state;
+}
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(collectState(),null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `evaluation_${(empName.value||'employee').replace(/\s+/g,'_')}.json`;
+  a.click();
+}
+function importJSONFile(evt){
+  const file = evt.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const s = JSON.parse(e.target.result);
+      empName.value=s.empName||''; empId.value=s.empId||''; empRole.value=s.empRole||'RN'; empUnit.value=s.empUnit||'';
+      reviewYear.value=s.reviewYear||''; reviewDate.value=s.reviewDate||''; managerName.value=s.managerName||''; jobTitleCC.value=s.jobTitleCC||'';
+      codeOfConduct.value=s.codeOfConduct||''; clinicalComp.value=s.clinicalComp||''; reviewedWithEmployee.value=s.reviewedWithEmployee||'';
+      employeeSelfAssessment.value = s.employeeSelfAssessment||'';
+      ccData = s.ccData||[];
+      buildCompetencyUI();
+      COMPETENCIES.forEach(c=>{ document.getElementById('rate_'+c.id).value = (s.ratings&&s.ratings[c.id])||''; regenerateExample(c.id); });
+      refreshSectionComments();
+      Object.entries(s.sectionComments||{}).forEach(([id,val])=>{ const el=document.getElementById(id); if(el) el.value=val; });
+      overallComments.value = s.overallComments||''; smartGoals.value = s.smartGoals||'';
+      document.getElementById('disciplinesTable').querySelectorAll('tr:not(:first-child)').forEach(r=>r.remove());
+      (s.disciplines||[]).forEach(d=>addDisciplineRow(d.desc,d.date));
+      if(s.coc){ cocPrintName.value=s.coc.printName||''; cocDate.value=s.coc.date||''; cocDepartment.value=s.coc.department||''; if(s.coc.sig) loadSignatureDataURL('cocSigPad', s.coc.sig); }
+      if(s.empSig){ empSigName.value=s.empSig.name||''; empSigDate.value=s.empSig.date||''; if(s.empSig.sig) loadSignatureDataURL('empSigPad', s.empSig.sig); }
+      if(s.leaderSig){ leaderSigName.value=s.leaderSig.name||''; leaderSigDate.value=s.leaderSig.date||''; if(s.leaderSig.sig) loadSignatureDataURL('leaderSigPad', s.leaderSig.sig); }
+      overallAutoDrafted = true;
+      refreshScore(); applyCCDataToForm();
+    }catch(err){ alert('Could not read that file.'); }
+  };
+  reader.readAsText(file);
+}
+
+// Printed textareas otherwise clip to their on-screen height and cut off any overflow text —
+// expand them to fit their full content just before printing, then restore afterward.
+function expandTextareasForPrint(){
+  document.querySelectorAll('textarea').forEach(ta=>{
+    ta.dataset.prevHeight = ta.style.height || '';
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight + 4) + 'px';
+    ta.style.overflow = 'visible';
+  });
+}
+function restoreTextareasAfterPrint(){
+  document.querySelectorAll('textarea').forEach(ta=>{
+    ta.style.height = ta.dataset.prevHeight || '';
+    ta.style.overflow = '';
+  });
+}
+window.addEventListener('beforeprint', expandTextareasForPrint);
+window.addEventListener('afterprint', restoreTextareasAfterPrint);
+
+// ---- Signature pads ----
+const signaturePads = {}; // id -> {canvas, ctx, drawing, hasInk}
+
+function setupSignaturePad(canvasId){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.strokeStyle = '#1f2a33';
+  const state = { canvas, ctx, drawing:false, hasInk:false };
+  signaturePads[canvasId] = state;
+
+  function pos(evt){
+    const rect = canvas.getBoundingClientRect();
+    const p = evt.touches ? evt.touches[0] : evt;
+    return { x: (p.clientX-rect.left) * (canvas.width/rect.width), y: (p.clientY-rect.top) * (canvas.height/rect.height) };
+  }
+  function start(evt){ evt.preventDefault(); state.drawing = true; const p = pos(evt); ctx.beginPath(); ctx.moveTo(p.x,p.y); }
+  function move(evt){ if(!state.drawing) return; evt.preventDefault(); const p = pos(evt); ctx.lineTo(p.x,p.y); ctx.stroke(); state.hasInk = true; }
+  function end(){ state.drawing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+}
+
+function clearSignature(canvasId){
+  const s = signaturePads[canvasId];
+  if(!s) return;
+  s.ctx.clearRect(0,0,s.canvas.width,s.canvas.height);
+  s.hasInk = false;
+}
+
+function getSignatureDataURL(canvasId){
+  const s = signaturePads[canvasId];
+  if(!s || !s.hasInk) return null;
+  return s.canvas.toDataURL('image/png');
+}
+
+function loadSignatureDataURL(canvasId, dataURL){
+  const s = signaturePads[canvasId];
+  if(!s || !dataURL) return;
+  const img = new Image();
+  img.onload = ()=>{ s.ctx.drawImage(img,0,0); s.hasInk = true; };
+  img.src = dataURL;
+}
+
+// ---- Written Disciplines table ----
+function addDisciplineRow(desc, date){
+  const table = document.getElementById('disciplinesTable');
+  const row = table.insertRow(-1);
+  row.innerHTML = `<td><input type="text" value="${desc?desc.replace(/"/g,'&quot;'):''}"></td>
+    <td><input type="date" value="${date||''}"></td>
+    <td class="no-print"><button class="btn secondary small" onclick="this.closest('tr').remove()">&times;</button></td>`;
+}
+
+// ---- init ----
+buildCompetencyUI();
+buildComplianceUI();
+refreshSectionComments();
+applyCCDataToForm();
+refreshFromCC(false);
+setInterval(()=>refreshFromCC(false), 5*60*1000);
+['cocSigPad','empSigPad','leaderSigPad'].forEach(setupSignaturePad);
+</script>
+</body>
+</html>
